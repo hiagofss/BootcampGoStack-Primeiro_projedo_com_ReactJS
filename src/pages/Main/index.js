@@ -43,6 +43,10 @@ export default class Main extends Component {
     try {
       const { newRepo, repositories } = this.state;
 
+      const existRepo = repositories.find(repo => repo.name === newRepo);
+
+      if (existRepo) throw 'Repositório duplicado';
+
       const response = await api.get(`/repos/${newRepo}`);
 
       const data = {
@@ -52,10 +56,16 @@ export default class Main extends Component {
       this.setState({
         repositories: [...repositories, data],
         newRepo: '',
-        // loading: false,
+        loading: false,
       });
     } catch (err) {
-      this.setState({ error: true, loading: false });
+      this.setState({
+        error: true,
+      });
+    } finally {
+      this.setState({
+        loading: false,
+      });
     }
   };
 
